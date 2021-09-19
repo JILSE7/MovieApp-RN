@@ -14,7 +14,9 @@ const HomeScreen = () => {
     useEffect(() => {
          movieDB.get("/now_playing")
                 .then(data => console.log(data.data))
-    }, [])
+    }, []);
+
+    console.log("hola");
 
     return (
         <View>
