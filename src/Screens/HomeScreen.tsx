@@ -1,28 +1,48 @@
-import { CommonActions, useNavigation } from '@react-navigation/native'
-import React, { useEffect } from 'react'
-import { useState } from 'react';
-import { Button, Text, View } from 'react-native'
-import movieDB from '../Api/movieDB';
+import React from 'react'
+import { useNavigation } from '@react-navigation/native'
+import { ActivityIndicator, Button, Dimensions, Text, View } from 'react-native'
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+
+import Carousel from 'react-native-snap-carousel';
+
+
+import UseMovie from '../Hooks/UseMovie';
+import MoviePoster from '../Components/MoviePoster';
 import DetailScreen from './DetailScreen';
 
+const {width: windowWidth} = Dimensions.get('window');
 const HomeScreen = () => {
+    
+    //Proteccion del safeArea Iphone;
+    const {top} = useSafeAreaInsets()
 
+    const {movies, isLoading} = UseMovie();
     const navigation = useNavigation();
 
-    const [movies, setmovies] = useState([])
 
-    useEffect(() => {
-         movieDB.get("/now_playing")
-                .then(data => console.log(data.data))
-    }, []);
 
-    console.log("hola");
+    if(isLoading){
+        return(
+        <View style={{flex: 1, justifyContent:'center', alignItems:'center'}}>
+            <ActivityIndicator color="blue" size={100}/>
+        </View>
+
+        )
+    }
+    
 
     return (
-        <View>
-                <Text>HomeScreen</Text>
+        <View style={{marginTop:top + 20, width: "100%"}}>
 
-                <Button title="Navigation" onPress={() => navigation.dispatch(CommonActions.navigate({name:"DetailScreen",}))}/>
+            <Carousel
+                data= {movies}
+                renderItem= {({item}) => <MoviePoster movie={item}/>}
+                sliderWidth={windowWidth}
+                
+                itemWidth={300}
+
+            />
+
         </View>
     )
 }
